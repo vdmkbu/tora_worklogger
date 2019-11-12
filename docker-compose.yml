@@ -1,0 +1,38 @@
+version: '2'
+services:
+    nginx:
+        build:
+            context: ./
+            dockerfile: docker/nginx.docker
+        volumes:
+            - ./:/var/www
+        ports:
+            - "8082:80"
+        links:
+            - php-fpm
+    php-fpm:
+        user: vdmkbu
+        build:
+            context: ./
+            dockerfile: docker/php-fpm.docker
+        volumes:
+            - ./:/var/www
+        links:
+            - mysql
+        environment:
+            - "DB_PORT=3306"
+            - "DB_HOST=mysql"
+            - "REDIS_PORT=6379"
+            - "REDIS_HOST=redis"
+            - "ELASTICSEARCH_HOSTS=elasticsearch:9200"
+    mysql:
+        image: mysql:5.7
+        volumes:
+            - ./storage/docker/mysql:/var/lib/mysql
+        environment:
+            - "MYSQL_ROOT_PASSWORD=123"
+            - "MYSQL_USER=worklogger"
+            - "MYSQL_PASSWORD=123"
+            - "MYSQL_DATABASE=worklogger"
+        ports:
+            - "33061:3306"
