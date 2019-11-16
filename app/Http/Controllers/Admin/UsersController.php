@@ -11,12 +11,32 @@ use Illuminate\Http\Request;
 class UsersController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
         $query = User::orderByDesc('id');
 
+        if (!empty($value = $request->get('id'))) {
+            $query->where('id', $value);
+        }
+        if (!empty($value = $request->get('name'))) {
+            $query->where('name', 'like', '%' . $value . '%');
+        }
+        if (!empty($value = $request->get('email'))) {
+            $query->where('email', 'like', '%' . $value . '%');
+        }
+        if (!empty($value = $request->get('status'))) {
+            $query->where('status', $value);
+        }
+        if (!empty($value = $request->get('role'))) {
+            $query->where('role', $value);
+        }
+
+        $statuses = User::statusesList();
+        $roles = User::rolesList();
+
         $users = $query->paginate(20);
-        return view('admin.users.index', compact('users'));
+
+        return view('admin.users.index', compact('users', 'statuses', 'roles'));
     }
 
 

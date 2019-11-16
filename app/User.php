@@ -55,7 +55,7 @@ class User extends Authenticatable
     {
         return [
             self::STATUS_ACTIVE => 'Active',
-            self::STATUS_DISASBLED => 'Disabled'
+            self::STATUS_DISABLED => 'Disabled'
         ];
     }
 
