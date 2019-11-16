@@ -26,4 +26,6 @@ Route::group([
     'middleware' => 'can:admin-panel'], function() {
 
         Route::get('/', 'HomeController@index')->name('home');
+        Route::resource('users', 'UsersController');
+        Route::post('/users/{user}/switch', 'UsersController@switch')->name('users.switch');
 });
