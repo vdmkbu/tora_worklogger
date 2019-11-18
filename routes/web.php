@@ -28,4 +28,11 @@ Route::group([
         Route::get('/', 'HomeController@index')->name('home');
         Route::resource('users', 'UsersController');
         Route::post('/users/{user}/switch', 'UsersController@switch')->name('users.switch');
+
+        Route::get('/projects', 'ProjectsController@index')->name('projects.index');
+        Route::get('/projects/create', 'ProjectsController@create')->name('projects.create');
+        Route::post('/projects/', 'ProjectsController@store')->name('projects.store');
+        Route::post('/projects/{project}/switch', 'ProjectsController@switch')->name('projects.switch');
+        Route::get('/projects/{project}/edit', 'ProjectsController@edit')->name('projects.edit');
+        Route::put('/projects/{project}', 'ProjectsController@update')->name('projects.update');
 });
