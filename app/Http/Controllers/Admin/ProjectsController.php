@@ -11,7 +11,7 @@ class ProjectsController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Project::orderBy('name','asc');
+        $query = Project::orderBy('status','asc')->orderBy('name', 'asc');
 
         if (!empty($value = $request->get('id'))) {
             $query->where('id', $value);
