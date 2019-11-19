@@ -9,13 +9,26 @@ use Illuminate\Http\Request;
 
 class ProjectsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $query = Project::orderBy('name','asc');
 
+        if (!empty($value = $request->get('id'))) {
+            $query->where('id', $value);
+        }
+
+        if (!empty($value = $request->get('name'))) {
+            $query->where('name', 'like', '%' . $value . '%');
+        }
+
+        if (!empty($value = $request->get('status'))) {
+            $query->where('status', $value);
+        }
+
+        $statuses = Project::statusesList();
         $projects = $query->paginate(20);
 
-        return view('admin.projects.index', compact('projects'));
+        return view('admin.projects.index', compact('projects', 'statuses'));
     }
 
     public function create()
