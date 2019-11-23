@@ -35,4 +35,11 @@ Route::group([
         Route::post('/projects/{project}/switch', 'ProjectsController@switch')->name('projects.switch');
         Route::get('/projects/{project}/edit', 'ProjectsController@edit')->name('projects.edit');
         Route::put('/projects/{project}', 'ProjectsController@update')->name('projects.update');
+
+        Route::get('/positions', 'PositionsController@index')->name('positions.index');
+        Route::get('/positions/create', 'PositionsController@create')->name('positions.create');
+        Route::post('/positions/', 'PositionsController@store')->name('positions.store');
+        Route::post('/positions/{position}/switch', 'PositionsController@switch')->name('positions.switch');
+        Route::get('/positions/{position}/edit', 'PositionsController@edit')->name('positions.edit');
+        Route::put('/positions/{position}', 'PositionsController@update')->name('positions.update');
 });
