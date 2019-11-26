@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Users\CreateRequest;
 use App\Http\Requests\Admin\Users\UpdateRequest;
+use App\Position;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -13,7 +14,7 @@ class UsersController extends Controller
 
     public function index(Request $request)
     {
-        $query = User::orderByDesc('id');
+        $query = User::with('position')->orderByDesc('id');
 
         if (!empty($value = $request->get('id'))) {
             $query->where('id', $value);
@@ -36,13 +37,16 @@ class UsersController extends Controller
 
         $users = $query->paginate(20);
 
+
         return view('admin.users.index', compact('users', 'statuses', 'roles'));
     }
 
 
     public function create()
     {
-        return view('admin.users.create');
+        $positions = Position::active()->get();
+
+        return view('admin.users.create', compact('positions'));
     }
 
 
@@ -67,14 +71,16 @@ class UsersController extends Controller
     public function edit(User $user)
     {
         $roles = User::rolesList();
-        return view('admin.users.edit', compact('user', 'roles'));
+        $positions = Position::get();
+
+        return view('admin.users.edit', compact('user', 'roles', 'positions'));
     }
 
 
     public function update(UpdateRequest $request, User $user)
     {
 
-        $user->update($request->only(['name', 'email']));
+        $user->update($request->only(['name', 'email', 'position_id']));
 
         if ($request['role'] !== $user->role) {
             $user->changeRole($request['role']);

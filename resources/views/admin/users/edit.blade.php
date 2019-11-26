@@ -24,6 +24,24 @@
         </div>
 
         <div class="form-group">
+            <label for="position" class="col-form-label">Position</label>
+            <select id="position" class="form-control{{ $errors->has('position_id') ? ' is-invalid' : '' }}"
+            name="position_id">
+                @foreach ($positions as $position)
+                    <option value="{{ $position->id }}"
+                            {{ $position->id === old('position_id', $user->position->id) ? ' selected' : '' }}
+                            {{ $position->isDisabled() ? ' disabled':'' }}
+                    >
+                        {{ $position->name }}
+                    </option>
+                @endforeach
+            </select>
+            @if ($errors->has('position_id'))
+                <span class="invalid-feedback"><strong>{{ $errors->first('position_id') }}</strong></span>
+            @endif
+        </div>
+
+        <div class="form-group">
             <label for="role" class="col-form-label">Role</label>
             <select id="role" class="form-control{{ $errors->has('role') ? ' is-invalid' : '' }}" name="role">
                 @foreach ($roles as $value => $label)

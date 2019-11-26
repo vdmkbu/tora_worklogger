@@ -22,6 +22,21 @@
         </div>
 
         <div class="form-group">
+            <label for="position_id" class="col-form-label">Position</label>
+            <select id="position_id" class="form-control{{ $errors->has('position_id') ? ' is-invalid' : '' }}"
+                    name="position_id">
+                @foreach ($positions as $position)
+                    <option value="{{ $position->id }}">
+                        {{ $position->name }}
+                    </option>
+                @endforeach
+            </select>
+            @if ($errors->has('position_id'))
+                <span class="invalid-feedback"><strong>{{ $errors->first('position_id') }}</strong></span>
+            @endif
+        </div>
+
+        <div class="form-group">
             <label for="password" class="col-form-label">Password</label>
             <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" value="{{ old('password') }}" required>
             @if ($errors->has('password'))

@@ -22,7 +22,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'role', 'status'
+        'name', 'email', 'password', 'role', 'status',
+        'position_id'
     ];
 
     /**
@@ -102,6 +103,11 @@ class User extends Authenticatable
     public function switchStatus(): void
     {
         $this->update(['status' => $this->isActive() ? self::STATUS_DISABLED : self::STATUS_ACTIVE]);
+    }
+
+    public function position()
+    {
+        return $this->belongsTo(Position::class);
     }
 
 }

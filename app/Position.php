@@ -37,4 +37,9 @@ class Position extends Model
     {
         $this->update(['status' => $this->isActive() ? self::STATUS_DISABLED : self::STATUS_ACTIVE]);
     }
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
 }

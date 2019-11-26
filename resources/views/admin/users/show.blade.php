@@ -37,6 +37,9 @@
             <th>Email</th><td>{{ $user->email }}</td>
         </tr>
         <tr>
+            <th>Position</th><td>{{ $user->position->name }}</td>
+        </tr>
+        <tr>
             <th>Status</th>
             <td>
                 @if($user->isDisabled())

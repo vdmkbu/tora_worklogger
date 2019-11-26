@@ -29,6 +29,7 @@ class UpdateRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
+            'position_id' => 'required|integer',
             'email' => 'required|string|email|max:255|unique:users,id,' . $this->user->id
         ];
     }
