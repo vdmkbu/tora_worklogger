@@ -43,3 +43,17 @@ Route::group([
         Route::get('/positions/{position}/edit', 'PositionsController@edit')->name('positions.edit');
         Route::put('/positions/{position}', 'PositionsController@update')->name('positions.update');
 });
+
+Route::group([
+   'prefix' => 'log',
+   'as' => 'log.',
+   'middleware' => 'auth'
+], function() {
+        Route::get('/', 'LogsController@index')->name('home');
+        Route::get('/{user}', 'LogsController@show')->name('show');
+        Route::get('/{user}/create', 'LogsController@create')->name('create');
+        Route::post('/{user}', 'LogsController@store')->name('store');
+        Route::get('/{user}/edit/{log}', 'LogsController@edit')->name('edit');
+        Route::put('/{user}/{log}', 'LogsController@update')->name('update');
+        Route::delete('/{user}/{log}', 'LogsController@destroy')->name('destroy');
+});
