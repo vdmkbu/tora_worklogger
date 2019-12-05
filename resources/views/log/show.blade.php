@@ -39,7 +39,7 @@
                                 <select id="project" class="form-control" name="project">
                                     <option value=""></option>
                                     @foreach ($projects as $project)
-                                        <option value="{{ $project->id }}"{{ $project->id === request('project') ? ' selected' : '' }}>
+                                        <option value="{{ $project->id }}"{{ $project->id == request('project') ? ' selected' : '' }}>
                                             {{ $project->name }}
                                         </option>
                                     @endforeach;
@@ -47,12 +47,21 @@
                             </div>
                         </div>
 
-                        <div class="col-sm-2">
+                        <div class="col-sm-1">
                             <div class="form-group">
                                 <label class="col-form-label">&nbsp;</label><br />
                                 <button type="submit" class="btn btn-primary">Search</button>
                             </div>
+
                         </div>
+                        <div class="col-sm-1">
+                            <div class="form-group">
+                                <label class="col-form-label">&nbsp;</label><br />
+                                <button type="button" onclick="window.location = window.location.href.split('?')[0];" class="btn btn-primary">Reset</button>
+                            </div>
+
+                        </div>
+
                     </div>
                 </form>
             </div>
@@ -88,7 +97,13 @@
                 </td>
             </tr>
             @endforeach
+            <tr>
+                <td colspan="3"><strong>Total: </strong></td>
+                <td><strong>{{ $time_total }}</strong></td>
+                <td></td>
+            </tr>
             </tbody>
         </table>
+
 
 @endsection

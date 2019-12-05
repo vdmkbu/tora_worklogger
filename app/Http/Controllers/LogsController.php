@@ -40,7 +40,7 @@ class LogsController extends Controller
         }
 
         if (!empty($value = $request->get('text'))) {
-           $query->where('text','LIKE', $value);
+           $query->where('text','LIKE', '%' . $value . '%');
         }
 
         if (!empty($value = $request->get('project'))) {
@@ -51,10 +51,11 @@ class LogsController extends Controller
 
         $projects = Project::active()->orderBy('name','asc')->get();
 
+        $time_total = $query->sum('time');
         $logs = $query->paginate(100);
 
 
-        return view('log.show', compact('logs', 'user', 'projects'));
+        return view('log.show', compact('logs', 'user', 'projects', 'time_total'));
     }
 
     public function create(User $user)
