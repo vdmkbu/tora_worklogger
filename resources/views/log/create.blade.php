@@ -32,8 +32,7 @@
             <label for="text" class="col-form-label">Text</label>
             <textarea id="date"
                       class="form-control{{ $errors->has('text') ? ' is-invalid' : '' }}"
-                      name="text" required>
-                {{ old('text') }}
+                      name="text" required>{{ old('text') }}
             </textarea>
             @if ($errors->has('text'))
                 <span class="invalid-feedback"><strong>{{ $errors->first('text') }}</strong></span>

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Log\CreateRequest;
+use App\Http\Requests\Log\UpdateRequest;
 use App\Log;
 use App\Project;
 use App\User;
@@ -47,13 +49,10 @@ class LogsController extends Controller
 
 
 
-
-
         $projects = Project::active()->orderBy('name','asc')->get();
 
         $logs = $query->paginate(100);
 
-            //->where('date', Carbon::now()->format('Y-m-d'))->get();
 
         return view('log.show', compact('logs', 'user', 'projects'));
     }
@@ -66,7 +65,7 @@ class LogsController extends Controller
         return view('log.create', compact('user', 'projects', 'time_list'));
     }
 
-    public function store(Request $request, User $user)
+    public function store(CreateRequest $request, User $user)
     {
         Log::create([
            'user_id' => $user->id,
@@ -88,7 +87,7 @@ class LogsController extends Controller
         return view('log.edit', compact('user', 'log', 'projects', 'time_list'));
     }
 
-    public function update(Request $request, User $user, Log $log)
+    public function update(UpdateRequest $request, User $user, Log $log)
     {
         $log->update([
             'date' => $request->date,
