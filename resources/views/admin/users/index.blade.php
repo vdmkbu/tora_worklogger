@@ -78,7 +78,7 @@
                     <td>{{ $user->id }}</td>
                     <td><a href="{{ route('admin.users.show', $user) }}">{{ $user->name }}</a></td>
                     <td>{{ $user->email }}</td>
-                    <td>{{ $user->position->name}}</td>
+                    <td>{{ $user->position->name }}</td>
                     <td>
                         @if($user->isDisabled())
                             <span class="badge badge-danger">Disabled</span>

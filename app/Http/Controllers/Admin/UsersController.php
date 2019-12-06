@@ -55,7 +55,8 @@ class UsersController extends Controller
         $user = User::register(
             $request['name'],
             $request['email'],
-            $request['password']
+            $request['password'],
+            $request['position_id']
         );
 
         return redirect()->route('admin.users.show', compact('user'));

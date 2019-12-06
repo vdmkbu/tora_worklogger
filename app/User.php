@@ -87,13 +87,14 @@ class User extends Authenticatable
     }
 
     // добавление пользователя
-    public static function register(string $name, string $email, string $password): self
+    public static function register(string $name, string $email, string $password, int $position_id): self
     {
 
         return static::create([
             'name' => $name,
             'email' => $email,
             'password' => bcrypt($password),
+            'position_id' => $position_id,
             'role' => self::ROLE_USER,
             'status' => self::STATUS_ACTIVE
         ]);
