@@ -2,6 +2,6 @@
 
 @section('content')
     @foreach($users as $user)
-        <li>{{ $user->name }}</li>
+        <p><a href="{{ route('log.show', $user->id)  }}">{{ $user->name }}</a></p>
     @endforeach
 @endsection

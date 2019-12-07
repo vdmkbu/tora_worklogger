@@ -17,6 +17,7 @@ class LogsController extends Controller
     {
         $users = User::all();
 
+        return view('log.index', compact('users'));
     }
 
     public function show(Request $request, $userId)
