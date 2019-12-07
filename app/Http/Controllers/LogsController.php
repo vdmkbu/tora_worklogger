@@ -9,17 +9,25 @@ use App\Project;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Gate;
 
 class LogsController extends Controller
 {
     public function index()
     {
-        echo '1';
+        $users = User::all();
+
     }
 
-    public function show(Request $request, User $user)
+    public function show(Request $request, $userId)
     {
-        $query = Log::with('project')->where('user_id', $user->id);
+
+        if (Gate::denies('log-owner', $userId)) {
+            abort(403, 'Access denied');
+        }
+
+
+        $query = Log::with('project')->where('user_id', $userId);
 
         // если нет параметров, то выводим за текущий месяц
         if (empty($request->get('from_date')) && empty($request->get('to_date'))) {
@@ -48,18 +56,21 @@ class LogsController extends Controller
         }
 
 
-
         $projects = Project::active()->orderBy('name','asc')->get();
 
         $time_total = $query->sum('time');
         $logs = $query->paginate(100);
 
 
-        return view('log.show', compact('logs', 'user', 'projects', 'time_total'));
+        return view('log.show', compact('logs', 'userId', 'projects', 'time_total'));
     }
 
     public function create(User $user)
     {
+        if (Gate::denies('log-owner', $user->id)) {
+            abort(403, 'Access denied');
+        }
+
         $projects = Project::active()->orderBy('name', 'asc')->get();
         $time_list  = Log::timeList();
 
@@ -68,6 +79,10 @@ class LogsController extends Controller
 
     public function store(CreateRequest $request, User $user)
     {
+        if (Gate::denies('log-owner', $user->id)) {
+            abort(403, 'Access denied');
+        }
+
         Log::create([
            'user_id' => $user->id,
            'project_id' => $request->project_id,
@@ -82,6 +97,10 @@ class LogsController extends Controller
 
     public function edit(User $user, Log $log)
     {
+        if (Gate::denies('log-owner', $user->id)) {
+            abort(403, 'Access denied');
+        }
+
         $projects = Project::active()->get();
         $time_list  = Log::timeList();
 
@@ -90,6 +109,10 @@ class LogsController extends Controller
 
     public function update(UpdateRequest $request, User $user, Log $log)
     {
+        if (Gate::denies('log-owner', $user->id)) {
+            abort(403, 'Access denied');
+        }
+
         $log->update([
             'date' => $request->date,
             'project_id' => $request->project_id,
@@ -101,11 +124,15 @@ class LogsController extends Controller
         return redirect()->route('log.show', $user);
     }
 
-    public function destroy(User $user, Log $log)
+    public function destroy($userId, Log $log)
     {
+        if (Gate::denies('log-owner', $userId)) {
+            abort(403, 'Access denied');
+        }
+
         $log->delete();
 
-        return redirect()->route('log.show', $user);
+        return redirect()->route('log.show', $userId);
     }
 
 

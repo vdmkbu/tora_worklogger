@@ -2,7 +2,7 @@
 
 @section('content')
 
-        <p><a href="{{ route('log.create', $user) }}" class="btn btn-primary mr-1">Add</a></p>
+        <p><a href="{{ route('log.create', $userId) }}" class="btn btn-primary mr-1">Add</a></p>
 
         <div class="card mb-3">
             <div class="card-header">Filter</div>
@@ -81,7 +81,7 @@
             <tbody>
             @foreach ($logs as $log)
             <tr>
-                <td><a href="{{ route('log.edit', [$user, $log]) }}">
+                <td><a href="{{ route('log.edit', [$userId, $log]) }}">
                     {{ \Illuminate\Support\Carbon::createFromDate($log->date)->format('d.m.Y') }}
                     </a>
                 </td>
@@ -89,7 +89,7 @@
                 <td><a href="{{ $log->link }}" target="_blank">{{ $log->text }}</a></td>
                 <td>{{ $log->time}}</td>
                 <td>
-                    <form method="POST" action="{{ route('log.destroy', [$user, $log]) }}" class="mr-1">
+                    <form method="POST" action="{{ route('log.destroy', [$userId, $log]) }}" class="mr-1">
                         @csrf
                         @method('DELETE')
                         <button class="btn btn-sm btn-danger">Delete</button>

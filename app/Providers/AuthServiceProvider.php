@@ -33,5 +33,15 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('manage-users', function (User $user) {
             return $user->isAdmin();
         });
+
+        Gate::define('log-owner', function (User $user, $userId) {
+            if ($user->isAdmin()) {
+                return true;
+            }
+            else {
+                return $userId == $user->id;
+            }
+
+        });
     }
 }
