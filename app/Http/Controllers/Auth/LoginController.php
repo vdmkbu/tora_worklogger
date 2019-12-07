@@ -81,7 +81,7 @@ class LoginController extends Controller
                 return back()->with('error', 'You account is disabled.');
             }
 
-            return redirect()->intended(route('home'));
+            return redirect()->intended(route('log.show', $user->id));
         }
 
         $this->incrementLoginAttempts($request);
