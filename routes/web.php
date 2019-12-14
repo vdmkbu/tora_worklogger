@@ -42,6 +42,10 @@ Route::group([
         Route::post('/positions/{position}/switch', 'PositionsController@switch')->name('positions.switch');
         Route::get('/positions/{position}/edit', 'PositionsController@edit')->name('positions.edit');
         Route::put('/positions/{position}', 'PositionsController@update')->name('positions.update');
+
+        Route::get('/reports', 'ReportsController@index')->name('reports.index');
+        Route::get('/reports/projects', 'ReportsController@projects')->name('reports.projects');
+        Route::get('/reports/positions', 'ReportsController@positions')->name('reports.positions');
 });
 
 Route::group([

@@ -11,4 +11,7 @@
     <li class="nav-item">
         <a class="nav-link{{ $page === 'projects' ? ' active' : '' }}" href="{{ route('admin.projects.index') }}">Projects</a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link{{ $page === 'reports' ? ' active' : '' }}" href="{{ route('admin.reports.index') }}">Reports</a>
+    </li>
 </ul>

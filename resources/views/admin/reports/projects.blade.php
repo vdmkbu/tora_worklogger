@@ -1,0 +1,89 @@
+@extends('layouts.app')
+
+@section('content')
+    @include('admin._nav', ['page' => 'reports'])
+
+    <ul class="nav nav-tabs mb-3">
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ route('admin.reports.projects') }}">By projects</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.reports.positions') }}">By positions</a>
+        </li>
+
+    </ul>
+
+    <div class="card mb-3">
+        <div class="card-header">Filter</div>
+        <div class="card-body">
+            <form action="?" method="GET">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label for="from_date" class="col-form-label">From date</label>
+                            <input id="from_date" class="form-control"
+                                   name="from_date"
+                                   value="{{ request('from_date') }}">
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label for="to_date" class="col-form-label">To date</label>
+                            <input id="to_date" class="form-control"
+                                   name="to_date"
+                                   value="{{ request('to_date') }}">
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label for="project" class="col-form-label">Project</label>
+                            <select id="project" class="form-control" name="project">
+                                <option value=""></option>
+                                @foreach ($projects as $project)
+                                    <option value="{{ $project->id }}"{{ $project->id == request('project') ? ' selected' : '' }}>
+                                        {{ $project->name }}
+                                    </option>
+                                @endforeach;
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-1">
+                        <div class="form-group">
+                            <label class="col-form-label">&nbsp;</label><br />
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </div>
+
+                    </div>
+                    <div class="col-sm-1">
+                        <div class="form-group">
+                            <label class="col-form-label">&nbsp;</label><br />
+                            <button type="button" onclick="window.location = window.location.href.split('?')[0];" class="btn btn-primary">Reset</button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>Interval</th>
+            <th>Project</th>
+            <th>Time total</th>
+        </tr>
+        </thead>
+        <tbody>
+    @foreach ($logs as $log)
+        <tr>
+            <td>{{ $interval['start'] }} — {{ $interval['end'] }}</td>
+            <td>{{ $log->project }}</td>
+            <td>{{ $log->time }}</td>
+        </tr>
+    @endforeach
+        </tbody>
+    </table>
+@endsection
