@@ -46,6 +46,7 @@ Route::group([
         Route::get('/reports', 'ReportsController@index')->name('reports.index');
         Route::get('/reports/projects', 'ReportsController@projects')->name('reports.projects');
         Route::get('/reports/positions', 'ReportsController@positions')->name('reports.positions');
+        Route::get('/reports/users', 'ReportsController@users')->name('reports.users');
 });
 
 Route::group([

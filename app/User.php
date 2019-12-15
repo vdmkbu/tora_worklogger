@@ -111,4 +111,9 @@ class User extends Authenticatable
         return $this->belongsTo(Position::class);
     }
 
+    public function scopeActive($query)
+    {
+        $query->where('status', 'active');
+    }
+
 }

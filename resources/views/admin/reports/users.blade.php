@@ -3,7 +3,7 @@
 @section('content')
     @include('admin._nav', ['page' => 'reports'])
 
-    @include('admin.reports._nav', ['report' => 'projects'])
+    @include('admin.reports._nav', ['report' => 'users'])
 
     <div class="card mb-3">
         <div class="card-header">Filter</div>
@@ -28,12 +28,12 @@
                     </div>
                     <div class="col-sm-2">
                         <div class="form-group">
-                            <label for="project" class="col-form-label">Project</label>
-                            <select id="project" class="form-control" name="project">
+                            <label for="user" class="col-form-label">User</label>
+                            <select id="user" class="form-control" name="user">
                                 <option value=""></option>
-                                @foreach ($projects as $project)
-                                    <option value="{{ $project->id }}"{{ $project->id == request('project') ? ' selected' : '' }}>
-                                        {{ $project->name }}
+                                @foreach ($users as $user)
+                                    <option value="{{ $user->id }}"{{ $user->id == request('user') ? ' selected' : '' }}>
+                                        {{ $user->name }}
                                     </option>
                                 @endforeach;
                             </select>
@@ -64,18 +64,19 @@
         <thead>
         <tr>
             <th>Interval</th>
-            <th>Project</th>
+            <th>User</th>
             <th>Time total</th>
         </tr>
         </thead>
         <tbody>
-    @foreach ($logs as $log)
-        <tr>
-            <td>{{ $interval['start'] }} — {{ $interval['end'] }}</td>
-            <td>{{ $log->project }}</td>
-            <td>{{ $log->time }}</td>
-        </tr>
-    @endforeach
+        @foreach ($logs as $log)
+            <tr>
+                <td>{{ $interval['start'] }} — {{ $interval['end'] }}</td>
+                <td>{{ $log->user }}</td>
+                <td>{{ $log->time }}</td>
+            </tr>
+        @endforeach
         </tbody>
     </table>
+
 @endsection

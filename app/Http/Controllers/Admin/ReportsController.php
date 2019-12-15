@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Log;
 use App\Position;
 use App\Project;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +20,8 @@ class ReportsController extends Controller
 
     public function projects(Request $request)
     {
+        // TODO: вынести выборку данных из контроллера; рефакторинг фильтрации
+
         $query = DB::table('logs')
             ->select('projects.name as project')
             ->selectRaw(DB::raw('SUM(time) as time'))
@@ -142,6 +145,67 @@ class ReportsController extends Controller
         $positions = Position::orderBy('name', 'asc')->get();
 
         return view('admin.reports.positions', compact('logs', 'positions', 'interval'));
+    }
+
+    public function users(Request $request)
+    {
+
+        $query = DB::table('logs')
+            ->select('users.name as user')
+            ->selectRaw(DB::raw('SUM(time) as time'))
+            ->join('users', 'logs.user_id','=', 'users.id')
+            ->groupBy('users.id');
+
+        // если нет параметров, то выводим за текущий месяц
+        if (empty($request->get('from_date')) && empty($request->get('to_date'))) {
+            $query->where('date', 'LIKE', Carbon::now()->format('Y-m') . '-%');
+
+
+            $interval = [
+                'start' => (new Carbon('first day of this month'))->format('Y.m.d'),
+                'end' => (new Carbon('last day of this month'))->format('Y.m.d')
+            ];
+
+
+        }
+
+        // если выбран интервал
+        if (!empty($from_date = $request->get('from_date')) && !empty($to_date = $request->get('to_date'))) {
+            $query->where('date', '>=', $from_date)->where('date', '<=', $to_date);
+
+            $interval = [
+                'start' => (new Carbon($from_date))->format('Y.m.d'),
+                'end' => (new Carbon($to_date))->format('Y.m.d')
+            ];
+        }
+
+        if(!empty($from_date = $request->get('from_date')) && empty($request->get('to_date'))) {
+            $query->where('date', '>=', $from_date);
+
+            $interval = [
+                'start' => (new Carbon($from_date))->format('Y.m.d'),
+                'end' => (new Carbon())->format('Y.m.d')
+            ];
+        }
+
+        if(empty($request->get('from_date')) && !empty($to_date = $request->get('to_date'))) {
+            $query->where('date', '<=', $to_date);
+
+            $interval = [
+                'start' => '',
+                'end' => (new Carbon($to_date))->format('Y.m.d')
+            ];
+        }
+
+        if (!empty($value = $request->get('user'))) {
+
+            $query->where('user_id', $value);
+        }
+
+        $logs = $query->get();
+        $users = User::active()->orderBy('name', 'asc')->get();
+
+        return view('admin.reports.users', compact('logs', 'interval', 'users'));
     }
 
 
