@@ -15,5 +15,6 @@ class DatabaseSeeder extends Seeder
         $this->call(PositionsTableSeeder::class);
         factory(\App\User::class, 10)->create();
         factory(\App\Project::class, 20)->create();
+        factory(\App\Log::class, 100)->create();
     }
 }
