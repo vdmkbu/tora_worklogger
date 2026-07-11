@@ -1,6 +1,9 @@
-FROM php:7.2-fpm
+FROM php:8.4-fpm
 
-RUN apt-get update && apt-get install -y libmcrypt-dev default-mysql-client \
-    && docker-php-ext-install pdo_mysql && echo "vdmkbu:x:1001:1001:Vadim,,,:/home/vdmkbu:/bin/bash" >> /etc/passwd
+RUN apt-get update && apt-get install -y \
+        default-mysql-client \
+        libzip-dev libonig-dev \
+    && docker-php-ext-install pdo_mysql bcmath mbstring zip \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /var/www

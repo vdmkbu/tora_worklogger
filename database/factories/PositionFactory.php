@@ -1,16 +1,22 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
 use App\Position;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Position::class, function (Faker $faker) {
+/**
+ * @extends Factory<Position>
+ */
+class PositionFactory extends Factory
+{
+    protected $model = Position::class;
 
-    $active = $faker->boolean;
-
-    return [
-        'name' => "position_" . $faker->word,
-        'status' => $active ? Position::STATUS_ACTIVE : Position::STATUS_DISABLED
-    ];
-});
+    public function definition(): array
+    {
+        return [
+            'name' => 'position_'.fake()->unique()->word(),
+            'status' => fake()->boolean() ? Position::STATUS_ACTIVE : Position::STATUS_DISABLED,
+        ];
+    }
+}

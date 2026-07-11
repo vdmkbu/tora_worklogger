@@ -1,26 +1,30 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
 use App\Log;
-use Faker\Generator as Faker;
+use App\Project;
+use App\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Log::class, function (Faker $faker) {
+/**
+ * @extends Factory<Log>
+ */
+class LogFactory extends Factory
+{
+    protected $model = Log::class;
 
-    $created_at = $faker->dateTimeBetween('-7 days');
+    public function definition(): array
+    {
+        $createdAt = fake()->dateTimeBetween('-7 days');
 
-    $projects = \App\Project::active()->get('id')->toArray();
-    $projects = array_map(null, ...$projects);
-
-    $users = App\User::active()->get('id')->toArray();
-    $users = array_map(null, ...$users);
-
-    return [
-        'project_id' => $faker->randomElements($projects[0])[0],
-        'text' => $faker->text(rand(20,40)),
-        'link' => $faker->url,
-        'user_id' => $faker->randomElements($users[0])[0],
-        'time' => rand(1,8),
-        'date' => date('Y-m-d', $created_at->getTimestamp())
-    ];
-});
+        return [
+            'project_id' => Project::active()->inRandomOrder()->value('id'),
+            'text' => fake()->text(rand(20, 40)),
+            'link' => fake()->url(),
+            'user_id' => User::active()->inRandomOrder()->value('id'),
+            'time' => rand(1, 8),
+            'date' => $createdAt->format('Y-m-d'),
+        ];
+    }
+}

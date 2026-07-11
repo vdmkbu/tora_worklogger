@@ -1,16 +1,17 @@
 <?php
 
+namespace Database\Seeders;
+
+use App\Position;
 use Illuminate\Database\Seeder;
 
 class PositionsTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
-        factory(\App\Position::class, 10)->create();
+        Position::factory()->count(10)->create();
     }
 }

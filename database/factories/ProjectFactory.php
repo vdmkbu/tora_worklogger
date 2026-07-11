@@ -1,13 +1,22 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
 use App\Project;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Project::class, function (Faker $faker) {
-    return [
-        'name' => "project_" . $faker->word,
-        'status' => $faker->boolean ? Project::STATUS_ACTIVE : Project::STATUS_DISABLED
-    ];
-});
+/**
+ * @extends Factory<Project>
+ */
+class ProjectFactory extends Factory
+{
+    protected $model = Project::class;
+
+    public function definition(): array
+    {
+        return [
+            'name' => 'project_'.fake()->unique()->word(),
+            'status' => fake()->boolean() ? Project::STATUS_ACTIVE : Project::STATUS_DISABLED,
+        ];
+    }
+}
