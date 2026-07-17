@@ -2,66 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Log\CreateRequest;
-use App\Http\Requests\Log\UpdateRequest;
-use App\Log;
-use App\Project;
-use App\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
+use App\Modules\Log\FormRequest\CreateRequest;
+use App\Modules\Log\FormRequest\ShowRequest;
+use App\Modules\Log\FormRequest\UpdateRequest;
+use App\Modules\Log\Models\Log;
+use App\Modules\Log\Service\LogService;
+use App\Modules\Project\Service\ProjectService;
+use App\Modules\User\Models\User;
+use App\Modules\User\Service\UserService;
 use Illuminate\Support\Facades\Gate;
 
 class LogsController extends Controller
 {
+    public function __construct(
+        private readonly LogService $logs,
+        private readonly ProjectService $projects,
+        private readonly UserService $users,
+    ) {}
+
     public function index()
     {
-        $users = User::all();
+        $users = $this->users->all();
 
         return view('log.index', compact('users'));
     }
 
-    public function show(Request $request, $userId)
+    public function show(ShowRequest $request, $userId)
     {
-
         if (Gate::denies('log-owner', $userId)) {
             abort(403, 'Access denied');
         }
 
+        $result = $this->logs->list($request->toDto((int) $userId));
+        $logs = $result->logs;
+        $time_total = $result->timeTotal;
 
-        $query = Log::with('project')->where('user_id', $userId);
-
-        // если нет параметров, то выводим за текущий месяц
-        if (empty($request->get('from_date')) && empty($request->get('to_date'))) {
-            $query->where('date', 'LIKE', Carbon::now()->format('Y-m') . '-%');
-        }
-
-        // если выбран интервал
-        if (!empty($from_date = $request->get('from_date')) && !empty($to_date = $request->get('to_date'))) {
-            $query->where('date', '>=', $from_date)->where('date', '<=', $to_date);
-        }
-
-        if(!empty($from_date = $request->get('from_date')) && empty($request->get('to_date'))) {
-            $query->where('date', '>=', $from_date);
-        }
-
-        if(empty($request->get('from_date')) && !empty($to_date = $request->get('to_date'))) {
-            $query->where('date', '<=', $to_date);
-        }
-
-        if (!empty($value = $request->get('text'))) {
-           $query->where('text','LIKE', '%' . $value . '%');
-        }
-
-        if (!empty($value = $request->get('project'))) {
-            $query->where('project_id', $value);
-        }
-
-
-        $projects = Project::active()->orderBy('name','asc')->get();
-
-        $time_total = $query->sum('time');
-        $logs = $query->paginate(100);
-
+        $projects = $this->projects->activeOrdered();
 
         return view('log.show', compact('logs', 'userId', 'projects', 'time_total'));
     }
@@ -72,8 +48,8 @@ class LogsController extends Controller
             abort(403, 'Access denied');
         }
 
-        $projects = Project::active()->orderBy('name', 'asc')->get();
-        $time_list  = Log::timeList();
+        $projects = $this->projects->activeOrdered();
+        $time_list = Log::timeList();
 
         return view('log.create', compact('user', 'projects', 'time_list'));
     }
@@ -84,14 +60,7 @@ class LogsController extends Controller
             abort(403, 'Access denied');
         }
 
-        Log::create([
-           'user_id' => $user->id,
-           'project_id' => $request->project_id,
-           'text' => $request->text,
-           'link' => $request->link,
-           'time' => $request->time,
-           'date' => $request->date
-        ]);
+        $this->logs->create($user, $request->toDto());
 
         return redirect()->route('log.show', $user);
     }
@@ -102,8 +71,8 @@ class LogsController extends Controller
             abort(403, 'Access denied');
         }
 
-        $projects = Project::active()->get();
-        $time_list  = Log::timeList();
+        $projects = $this->projects->activeOrdered();
+        $time_list = Log::timeList();
 
         return view('log.edit', compact('user', 'log', 'projects', 'time_list'));
     }
@@ -114,13 +83,7 @@ class LogsController extends Controller
             abort(403, 'Access denied');
         }
 
-        $log->update([
-            'date' => $request->date,
-            'project_id' => $request->project_id,
-            'text' => $request->text,
-            'link' => $request->link,
-            'time' => $request->time
-        ]);
+        $this->logs->update($log, $request->toDto());
 
         return redirect()->route('log.show', $user);
     }
@@ -131,11 +94,8 @@ class LogsController extends Controller
             abort(403, 'Access denied');
         }
 
-        $log->delete();
+        $this->logs->delete($log);
 
         return redirect()->route('log.show', $userId);
     }
-
-
-    
 }

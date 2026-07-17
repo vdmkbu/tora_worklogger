@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Log;
-use App\Project;
-use App\User;
+use App\Modules\Log\Models\Log;
+use App\Modules\Project\Models\Project;
+use App\Modules\User\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder

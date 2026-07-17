@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Position;
+use App\Modules\Position\Models\Position;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Position;
+use App\Modules\Position\Models\Position;
 use Illuminate\Database\Seeder;
 
 class PositionsTableSeeder extends Seeder

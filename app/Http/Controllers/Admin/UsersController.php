@@ -3,104 +3,74 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Users\CreateRequest;
-use App\Http\Requests\Admin\Users\UpdateRequest;
-use App\Position;
-use App\User;
-use Illuminate\Http\Request;
+use App\Modules\Position\Service\PositionService;
+use App\Modules\User\FormRequest\CreateRequest;
+use App\Modules\User\FormRequest\IndexRequest;
+use App\Modules\User\FormRequest\UpdateRequest;
+use App\Modules\User\Models\User;
+use App\Modules\User\Service\UserService;
 
 class UsersController extends Controller
 {
+    public function __construct(
+        private readonly UserService $users,
+        private readonly PositionService $positions,
+    ) {}
 
-    public function index(Request $request)
+    public function index(IndexRequest $request)
     {
-        $query = User::with('position')->orderByDesc('id');
-
-        if (!empty($value = $request->get('id'))) {
-            $query->where('id', $value);
-        }
-        if (!empty($value = $request->get('name'))) {
-            $query->where('name', 'like', '%' . $value . '%');
-        }
-        if (!empty($value = $request->get('email'))) {
-            $query->where('email', 'like', '%' . $value . '%');
-        }
-        if (!empty($value = $request->get('status'))) {
-            $query->where('status', $value);
-        }
-        if (!empty($value = $request->get('role'))) {
-            $query->where('role', $value);
-        }
-
+        $users = $this->users->paginate($request->toDto());
         $statuses = User::statusesList();
         $roles = User::rolesList();
-
-        $users = $query->paginate(20);
-
 
         return view('admin.users.index', compact('users', 'statuses', 'roles'));
     }
 
-
     public function create()
     {
-        $positions = Position::active()->get();
+        $positions = $this->positions->activeList();
 
         return view('admin.users.create', compact('positions'));
     }
 
-
     public function store(CreateRequest $request)
     {
-        $user = User::register(
-            $request['name'],
-            $request['email'],
-            $request['password'],
-            $request['position_id']
-        );
+        $user = $this->users->create($request->toDto());
 
         return redirect()->route('admin.users.show', compact('user'));
     }
-
 
     public function show(User $user)
     {
         return view('admin.users.show', compact('user'));
     }
 
-
     public function edit(User $user)
     {
         $roles = User::rolesList();
-        $positions = Position::get();
+        $positions = $this->positions->all();
 
         return view('admin.users.edit', compact('user', 'roles', 'positions'));
     }
 
-
     public function update(UpdateRequest $request, User $user)
     {
-
-        $user->update($request->only(['name', 'email', 'position_id']));
-
-        if ($request['role'] !== $user->role) {
-            $user->changeRole($request['role']);
-        }
+        $this->users->update($user, $request->toDto());
 
         return redirect()->route('admin.users.show', $user);
     }
 
-
     public function destroy(User $user)
     {
-        $user->delete();
+        $this->users->delete($user);
 
         return redirect()->route('admin.users.index');
     }
 
     public function switch(User $user)
     {
-        $user->switchStatus();
+        $this->users->switchStatus($user);
+
         return redirect()->route('admin.users.show', $user);
     }
 }

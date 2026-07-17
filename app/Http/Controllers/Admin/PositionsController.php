@@ -3,73 +3,55 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Positions\CreateRequest;
-use App\Position;
-use Illuminate\Http\Request;
+use App\Modules\Position\FormRequest\CreateRequest;
+use App\Modules\Position\FormRequest\IndexRequest;
+use App\Modules\Position\Models\Position;
+use App\Modules\Position\Service\PositionService;
 
 class PositionsController extends Controller
 {
+    public function __construct(
+        private readonly PositionService $positions,
+    ) {}
 
-    public function index(Request $request)
+    public function index(IndexRequest $request)
     {
-        $query = Position::orderBy('status', 'asc')->orderBy('name', 'asc');
-
-        if (!empty($value = $request->get('id'))) {
-            $query->where('id', $value);
-        }
-
-        if (!empty($value = $request->get('name'))) {
-            $query->where('name', 'like', '%' . $value . '%');
-        }
-
-        if (!empty($value = $request->get('status'))) {
-            $query->where('status', $value);
-        }
-
+        $positions = $this->positions->paginate($request->toDto());
         $statuses = Position::statusesList();
-        $positions = $query->paginate(20);
 
         return view('admin.positions.index', compact('positions', 'statuses'));
     }
-
 
     public function create()
     {
         return view('admin.positions.create');
     }
 
-
     public function store(CreateRequest $request)
     {
-        Position::create([
-            'name' => $request->name,
-            'status' => Position::STATUS_ACTIVE
-        ]);
+        $this->positions->create($request->toDto());
 
         return redirect()->route('admin.positions.index');
     }
 
-
-
-
     public function edit(Position $position)
     {
         $statuses = Position::statusesList();
+
         return view('admin.positions.edit', compact('position', 'statuses'));
     }
 
-
     public function update(CreateRequest $request, Position $position)
     {
-        $position->update($request->only(['name']));
+        $this->positions->update($position, $request->toDto());
 
         return redirect()->route('admin.positions.index');
     }
 
     public function switch(Position $position)
     {
-        $position->switchStatus();
+        $this->positions->switchStatus($position);
+
         return redirect()->route('admin.positions.index');
     }
-
 }

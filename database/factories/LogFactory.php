@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Log;
-use App\Project;
-use App\User;
+use App\Modules\Log\Models\Log;
+use App\Modules\Project\Models\Project;
+use App\Modules\User\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
